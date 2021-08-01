@@ -155,15 +155,14 @@ export class View {
 
   getPreviewOutput(title, href, description, tags) {
     const titleLink = `- [${title}](${href})`;
-    const tagList = tags.map((tag) => `#${tag}`).join("");
     const outputArray = [titleLink];
 
-    if (description) {
-      outputArray.push(description);
+    if (tags.length) {
+      outputArray.push(tags.map((tag) => `#${tag}`).join(" "));
     }
 
-    if (tagList.length) {
-      outputArray.push(tagList);
+    if (description) {
+      outputArray.push('\n > ' + description);
     }
 
     return outputArray.join(" ");

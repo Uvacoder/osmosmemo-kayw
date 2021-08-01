@@ -12,10 +12,21 @@ async function build() {
 
   await require("esbuild")
     .build({
-      entryPoints: ["src/content-script.ts", "src/popup/popup.ts", "src/options/options.ts"],
+      entryPoints: ["src/content-script.ts", "src/popup/popup.ts", "src/options/options.ts", "src/background.ts"],
       bundle: true,
       format: "esm",
       outdir: UNPACKED_OUT_DIR,
+      sourcemap: true,
+      watch: {
+        async onRebuild(error, result) {
+          if (error) {
+            console.error('watch build failed:', error)
+          } else {
+            await fs.copyFile(path.resolve("src/manifest.json"), path.join(UNPACKED_OUT_DIR, "manifest.json")),
+            console.log('watch build succeeded:', result)
+          }
+        },
+      },
     })
     .catch(() => process.exit(1));
 

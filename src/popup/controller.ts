@@ -62,8 +62,8 @@ export class Controller {
     }
   }
 
-  onData({ title, href, cacheKey }: Partial<FullModel>) {
-    this.model.update({ title: title, href, cacheKey, saveStatus: "new" });
+  onData({ title, href, description, cacheKey }: Partial<FullModel>) {
+    this.model.update({ title, description, href, cacheKey, saveStatus: "new" });
   }
 
   onCache(cachedModel: CacheableModel) {
