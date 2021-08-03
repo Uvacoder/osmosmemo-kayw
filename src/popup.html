@@ -29,6 +29,13 @@
       </div>
       <hr />
       <div class="field">
+        <label class="field__label" for="tags">File</label>
+        <div class="add-tag field__input">
+          <input id="filename" class="js-file-input as-partial-l" name="file" type="text" list="file-options" title="Alphanumeric characters, hyphen and underscore only "/>
+          <datalist id="file-options" class="js-file-options"></datalist>
+        </div>
+      </div>
+      <div class="field">
         <label class="field__label" for="tags">Tags</label>
         <div class="add-tag field__input">
           <div class="added-tags js-added-tags"></div>

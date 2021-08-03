@@ -22,7 +22,15 @@ async function build() {
           if (error) {
             console.error('watch build failed:', error)
           } else {
-            await fs.copyFile(path.resolve("src/manifest.json"), path.join(UNPACKED_OUT_DIR, "manifest.json")),
+  const copyTasksAsync = [
+    fs.copyFile(path.resolve("src/options.html"), path.join(UNPACKED_OUT_DIR, "options.html")),
+    fs.copyFile(path.resolve("src/popup.html"), path.join(UNPACKED_OUT_DIR, "popup.html")),
+    fs.copyFile(path.resolve("src/manifest.json"), path.join(UNPACKED_OUT_DIR, "manifest.json")),
+    fs.copyFile(path.resolve("src/styles.css"), path.join(UNPACKED_OUT_DIR, "styles.css")),
+    fs.copy(path.resolve("src/assets"), path.join(UNPACKED_OUT_DIR, "assets")),
+  ];
+
+  await Promise.all(copyTasksAsync);
             console.log('watch build succeeded:', result)
           }
         },

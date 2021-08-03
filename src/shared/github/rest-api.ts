@@ -80,6 +80,9 @@ async function getDefaultBranch({ accessToken, username, repo }): Promise<string
 }
 
 async function getContentsInternal({ accessToken, username, repo, filename }) {
+  if (!accessToken || !username || !repo || !filename) {
+    throw new Error('github client invalid.')
+  }
   return await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${filename}`, {
     headers: new Headers({
       Authorization: "Basic " + btoa(`${username}:${accessToken}`),

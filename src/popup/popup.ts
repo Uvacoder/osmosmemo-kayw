@@ -19,11 +19,11 @@ async function initialize() {
     }
   });
 
-  /* Step 2 - Inject content script into active tab
+  /* Step 2 - Inject content script into active tab */
   await browser.tabs.executeScript({
     file: "content-script.js",
   });
-*/
+
   /* Step 3 - Send out request to content script */
   const tabs = await browser.tabs.query({ active: true, currentWindow: true });
   if (!tabs?.[0]?.id) {

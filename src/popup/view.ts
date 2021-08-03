@@ -7,6 +7,8 @@ const titleInputElement = document.querySelector(".js-title") as HTMLInputElemen
 const linkInputElement = document.querySelector(".js-link") as HTMLInputElement;
 const descriptionInputElement = document.querySelector(".js-description") as HTMLInputElement;
 const previewElement = document.querySelector(".js-preview") as HTMLInputElement;
+const fileInputElement = document.querySelector(".js-file-input") as HTMLInputElement;
+const fileOptionsElement = document.querySelector(".js-file-options") as HTMLDataListElement;
 const addedTagsElement = document.querySelector(".added-tags") as HTMLElement;
 const tagInputElement = document.querySelector(".js-tag-input") as HTMLInputElement;
 const tagOptionsElement = document.querySelector(".js-tag-options") as HTMLDataListElement;
@@ -33,7 +35,7 @@ export class View {
     return formElement.checkValidity();
   }
 
-  handleOutput({ onTitleChange, onLinkChange, onDescriptionChange, onAddTag, onRemoveTagByIndex, onSave }) {
+  handleOutput({ onTitleChange, onLinkChange, onDescriptionChange,  onFilenameChange, onAddTag, onRemoveTagByIndex, onSave }) {
     formElement.addEventListener("submit", (event) => {
       event.preventDefault(); // don't reload page
 
@@ -46,6 +48,7 @@ export class View {
     titleInputElement.addEventListener("input", (e) => onTitleChange((e.target as HTMLInputElement).value));
     linkInputElement.addEventListener("input", (e) => onLinkChange((e.target as HTMLInputElement).value));
     descriptionInputElement.addEventListener("input", (e) => onDescriptionChange((e.target as HTMLInputElement).value));
+    fileInputElement.addEventListener("input", (ev) => onFilenameChange(ev.target as HTMLInputElement).value)
     addTagButtonElement.addEventListener("click", () => this.commitTag({ onAddTag, refocus: true }));
     tagInputElement.addEventListener("keydown", (e) => {
       if (e.isComposing) {
@@ -85,7 +88,7 @@ export class View {
   }
 
   render({ state, previousState }) {
-    const { title, href, description, tags, tagOptions, saveStatus, connectionStatus, libraryUrl } = state;
+    const { title, href, description, tags, tagOptions, fileOptions, saveStatus, connectionStatus, libraryUrl } = state;
 
     if (title !== previousState.title) {
       titleInputElement.value = title;
@@ -105,6 +108,9 @@ export class View {
         .join("");
     }
 
+    if (fileOptions.join("") !== previousState.fileOptions.join("")) {
+      fileOptionsElement.innerHTML = fileOptions.map((option) => `<option value=${option}></option>`).join("");
+    }
     if (tagOptions.join("") !== previousState.tagOptions.join("")) {
       tagOptionsElement.innerHTML = tagOptions.map((option) => `<option value=${option}></option>`).join("");
     }
@@ -154,6 +160,9 @@ export class View {
   }
 
   getPreviewOutput(title, href, description, tags) {
+    if (!title || !href) {
+      return ""
+    }
     const titleLink = `- [${title}](${href})`;
     const outputArray = [titleLink];
 
