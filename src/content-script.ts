@@ -70,7 +70,6 @@ function injectContentScript() {
           }
         }
       })
-      console.log(request)
       document.body.parentElement?.appendChild(iframeEle)
     }
   });

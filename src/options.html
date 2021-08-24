@@ -33,19 +33,24 @@
       </div>
       <hr />
       <div class="field">
-        <label for="filename" class="field__label">Storage filename</label>
-        <input id="filename" class="js-filename field__input" type="text" placeholder="e.g. README.md" required />
+        <label for="filename" class="field__label">Place</label>
+        <input id="filename" class="js-place field__input" type="text" placeholder="e.g." required />
+      </div>
+      <div class="field">
+        <label for="manifest" class="field__label">Manifest</label>
+        <input id="manifest" class="js-manifest field__input" type="text" placeholder="e.g. manifest.json" required />
       </div>
       <hr />
       <hr />
       <button class="js-connect">🔗 Connect</button>
       <hr />
       <hr />
+      <div class="js-staging-area"></div>
+      <hr />
+      <div class="added-tags js-added-tags"></div>
+      <hr />
+      <div class="added-tags js-added-files"></div>
       <div class="field" data-show="on-success">
-        <label for="tags" class="field__label">Tags (<span class="js-tag-count"></span>)</label>
-        <div class="field__input js-textarea-fit-container">
-          <textarea id="tags" class="js-tags field__input" readonly rows="1"></textarea>
-        </div>
       </div>
       <div data-show="on-error">
         <div class="trouble-shooting-title">Having trouble? Check these:</div>

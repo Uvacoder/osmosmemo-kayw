@@ -209,3 +209,14 @@ input[name="tag"] {
   font-size: 14px;
   padding-left: 24px;
 }
+
+.staging-textarea {
+  position: relative;
+}
+
+.staging-remove-btn {
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  cursor: pointer;
+}

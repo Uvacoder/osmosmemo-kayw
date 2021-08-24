@@ -14,6 +14,7 @@ const tagInputElement = document.querySelector(".js-tag-input") as HTMLInputElem
 const tagOptionsElement = document.querySelector(".js-tag-options") as HTMLDataListElement;
 const addTagButtonElement = document.querySelector(".js-add-tag-button") as HTMLButtonElement;
 const actionsElement = document.querySelector(".js-actions") as HTMLDivElement;
+const stageButtonElement = document.querySelector(".js-stage") as HTMLButtonElement;
 const saveButtonElement = document.querySelector(".js-save") as HTMLButtonElement;
 const openOptionsButtonElement = document.querySelector(".js-open-options") as HTMLButtonElement;
 const openLibraryLinkElement = document.querySelector(".js-open-library") as HTMLAnchorElement;
@@ -35,20 +36,31 @@ export class View {
     return formElement.checkValidity();
   }
 
-  handleOutput({ onTitleChange, onLinkChange, onDescriptionChange,  onFilenameChange, onAddTag, onRemoveTagByIndex, onSave }) {
+  handleOutput({ onTitleChange, onLinkChange, onDescriptionChange,  onFilenameChange, onAddTag, onRemoveTagByIndex, onStage, onSave }) {
     formElement.addEventListener("submit", (event) => {
       event.preventDefault(); // don't reload page
 
-      // commit any tag left in the input
-      this.commitTag({ onAddTag });
-
       onSave();
     });
+    stageButtonElement.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+
+      // commit any tag left in the input
+      this.commitTag({ onAddTag });
+      const res = await onStage()
+      if (res === 'fail') {
+        stageButtonElement.innerText = "❗Stage"
+      } else if (res === 'success') {
+        stageButtonElement.innerText = "✅Staged"
+      } else if (res === 'error') {
+        stageButtonElement.innerText = "🚫Stage"
+      }
+    })
 
     titleInputElement.addEventListener("input", (e) => onTitleChange((e.target as HTMLInputElement).value));
     linkInputElement.addEventListener("input", (e) => onLinkChange((e.target as HTMLInputElement).value));
     descriptionInputElement.addEventListener("input", (e) => onDescriptionChange((e.target as HTMLInputElement).value));
-    fileInputElement.addEventListener("input", (ev) => onFilenameChange(ev.target as HTMLInputElement).value)
+    fileInputElement.addEventListener("blur", (ev) => onFilenameChange((ev.target as HTMLInputElement).value));
     addTagButtonElement.addEventListener("click", () => this.commitTag({ onAddTag, refocus: true }));
     tagInputElement.addEventListener("keydown", (e) => {
       if (e.isComposing) {

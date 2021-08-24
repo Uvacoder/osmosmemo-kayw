@@ -31,7 +31,13 @@
       <div class="field">
         <label class="field__label" for="tags">File</label>
         <div class="add-tag field__input">
-          <input id="filename" class="js-file-input as-partial-l" name="file" type="text" list="file-options" title="Alphanumeric characters, hyphen and underscore only "/>
+          <!--
+            https://superuser.com/questions/1436839/clear-autofill-form-data-google-chrome
+            https://stackoverflow.com/questions/28965234/remove-partial-input-auto-complete-from-datalist-input
+            https://stackoverflow.com/questions/48338606/html-datalist-shows-extra-options-separated-by-horizontal-line
+            https://stackoverflow.com/questions/15927182/how-to-turn-off-autocomplete-while-keep-using-datalist-element-in-html
+          -->
+          <input id="filename" class="js-file-input as-partial-l" name="file" type="text" list="file-options" title="Alphanumeric characters, hyphen and underscore only " autocomplete="off" required />
           <datalist id="file-options" class="js-file-options"></datalist>
         </div>
       </div>
@@ -54,11 +60,11 @@
       <hr />
       <hr />
       <div class="js-actions actions">
-        <button type="submit" class="js-save">💾 Save</button>
+        <button class="js-stage">💾 Stage</button>
+        <button type="submit" class="js-save">🔗 Save to GitHub</button>
         <a class="button js-open-library" target="_blank">🔎 Search</a>
         <button type="button" class="js-open-options open-options" title="Open settings">
-          <span class="open-options__show-when-valid">⚙</span>
-          <span class="open-options__show-when-error">🔗 Connect to GitHub</span>
+          <span class="open-options__show-when-error">⚙</span>
         </button>
       </div>
     </form>

@@ -1,5 +1,5 @@
 import { browser } from "webextension-polyfill-ts";
-import { getContentString, getLibraryUrl, insertContent } from "../shared/github/rest-api";
+import { getContentString, getLibraryUrl, getMergedContent, getMergedJson, insertMultipleFiles } from "../shared/github/rest-api";
 //import { getUniqueTagsFromMarkdownString } from "../shared/utils/tags";
 import { getUserOptions } from "../shared/utils/user-options";
 import type { CacheableModel, Model, FullModel } from "./model";
@@ -26,6 +26,7 @@ export class Controller {
       onRemoveTagByIndex: (index) =>
         this.model.updateAndCache({ tags: this.model.state.tags.filter((_, i) => i !== index) }),
       onSave: () => this.onSave(),
+      onStage: () => this.onStage()
     });
 
     this.model.emitter.addEventListener("update", (e) => {
@@ -38,11 +39,11 @@ export class Controller {
 
     const optionsData = await getUserOptions();
 
-    const { accessToken, username, repo, filename } = optionsData;
+    const { accessToken, username, repo, manifest } = optionsData;
     this.model.update({ tagOptions: ['wiki', 'noteui', 'devops', 'kubernetes'], fileOptions: ['wiki/webapp/react.md', 'wiki/go-nimrod.md', 'snippets/golang/sorter.go'] });
     try {
-      const wikiMetaJson= await getContentString({ accessToken, username, repo, filename: 'wiki.json'});
-      const libraryUrl = await getLibraryUrl({ accessToken, username, repo, filename });
+      const wikiMetaJson= await getContentString({ accessToken, username, repo, filename: manifest });
+      const libraryUrl = await getLibraryUrl({ accessToken, username, repo, filename: 'README.md' });
       const { tags: tagOptions, files: fileOptions} = JSON.parse(wikiMetaJson)
       this.model.update({ tagOptions, fileOptions, libraryUrl, connectionStatus: "valid" });
       console.log(`[controller] tags available`, tagOptions.length);
@@ -50,19 +51,50 @@ export class Controller {
       this.model.update({ connectionStatus: "error" });
     }
   }
+  async onStage() {
+    if (!this.view.validateForm()) {
+      return 'fail';
+    }
+    try {
+      const { title, href, description, tags, filename, newTagOptions, newFileOptions } = this.model.state;
+      const newEntryString = this.view.getPreviewOutput(title, href, description, tags);
+      const workingAreaRes = await browser.storage.local.get({ 'working-area': {} })
+      const workingAreaMap = workingAreaRes['working-area']
+      workingAreaMap[filename] = [newEntryString].concat(workingAreaMap[filename] || [])
+      await browser.storage.local.set({ 'working-area': workingAreaMap })
+      if (newTagOptions.length || newFileOptions.length) {
+        const tagfileOptRes = await browser.storage.local.get({ 'new-tagfiles': {tags: [], files: []}});
+        const newTagFileOptions = tagfileOptRes['new-tagfiles']
+        newTagFileOptions.tags = newTagFileOptions.tags.concat(newTagOptions)
+        newTagFileOptions.files= newTagFileOptions.files.concat(newFileOptions)
+        await browser.storage.local.set({ 'new-tagfiles': newTagFileOptions })
+      }
+      return 'success'
+    } catch {
+      return 'error'
+    }
+  }
 
   async onSave() {
-    if (!this.view.validateForm()) {
-      return;
-    }
 
     this.model.update({ saveStatus: "saving" });
     const optionsData = await getUserOptions();
     try {
-      const { accessToken, username, repo } = optionsData;
-      const { title, href, description, tags, filename } = this.model.state;
-      const newEntryString = this.view.getPreviewOutput(title, href, description, tags);
-      await insertContent({ accessToken, username, repo, filename, content: newEntryString });
+      const { accessToken, username, repo, place, manifest } = optionsData;
+      const workingAreaMap = (await browser.storage.local.get({ 'working-area': {}}))['working-area']
+      const commitFiles: { path: string; content: string}[] = []
+      Object.keys(workingAreaMap).forEach(async (filename) => {
+        const resultContent = await getMergedContent({ accessToken, username, repo, filename, content: workingAreaMap[filename].join('\n') });
+        commitFiles.push({ path: filename, content: resultContent  })
+      })
+      const newTagFileOptions = (await browser.storage.local.get({'new-tagfiles': { tags: [], files: []}}))['new-tagfiles'];
+      if (newTagFileOptions.tags.length || newTagFileOptions.files.length) {
+        const resultContent = await getMergedJson({ accessToken, username, repo, newTagFileOptions, filename: manifest });
+        commitFiles.push({ path: filename, content: resultContent  })
+      }
+      await insertMultipleFiles({ accessToken, username, repo, files: commitFiles, message: `Summary links added @${place}` });
+      await browser.storage.local.remove('working-area')
+      await browser.storage.local.remove('new-tagfiles')
       this.model.update({ saveStatus: "saved" });
     } catch {
       this.model.update({ saveStatus: "error" });

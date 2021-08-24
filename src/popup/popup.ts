@@ -24,6 +24,7 @@ async function initialize() {
     file: "content-script.js",
   });
 
+
   /* Step 3 - Send out request to content script */
   const tabs = await browser.tabs.query({ active: true, currentWindow: true });
   if (!tabs?.[0]?.id) {
