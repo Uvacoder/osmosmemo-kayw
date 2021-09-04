@@ -1,5 +1,24 @@
 [![image](./docs/media/osmosmemo-square-badge.svg)](#get-started)
 
+# About This Fork
+
+## What Modified
+- load files and tags from pre-generated manifest.json
+- support select which file to save links
+- support select page text to save (only work in chrome)
+
+## What ToDo
+1. improve extension debug experience
+
+  * https://github.com/gabrielgodoy-zz/github-stars-manager/blob/master/src/assets/js/background/hot-reload.js
+
+2. improve ui/ux with a SPA framework
+
+3. use single div to get rid of popup.html iframe usage in content_script
+
+4. fix browser.tabs undefined in firefox (call it only in background.js)
+
+
 # osmos::memo
 
 A browser bookmark manager optimized for capture and retrieval speed.

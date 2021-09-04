@@ -131,7 +131,7 @@ input[name="tag"] {
 .actions {
   cursor: default;
   display: grid;
-  grid-template-columns: 1fr 1fr 40px;
+  grid-template-columns: 1fr;
   grid-gap: 4px;
 }
 

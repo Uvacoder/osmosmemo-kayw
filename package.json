@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node scripts/build.js",
     "build": "npm start && npm run pack",
+    "prettier": "prettier --write **/*.{ts,html,css}",
     "pack": "node scripts/pack.js"
   },
   "repository": {
@@ -23,6 +24,7 @@
     "@types/fs-extra": "^9.0.11",
     "esbuild": "^0.12.17",
     "fs-extra": "^10.0.0",
+    "prettier": "^2.3.2",
     "webextension-polyfill-ts": "^0.26.0"
   }
 }

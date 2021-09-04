@@ -17,7 +17,6 @@ const actionsElement = document.querySelector(".js-actions") as HTMLDivElement;
 const stageButtonElement = document.querySelector(".js-stage") as HTMLButtonElement;
 const saveButtonElement = document.querySelector(".js-save") as HTMLButtonElement;
 const openOptionsButtonElement = document.querySelector(".js-open-options") as HTMLButtonElement;
-const openLibraryLinkElement = document.querySelector(".js-open-library") as HTMLAnchorElement;
 
 const saveStatusDisplayStrings = new Map([
   ["new", "💾 Save"],
@@ -37,7 +36,7 @@ export class View {
   }
 
   handleOutput({ onTitleChange, onLinkChange, onDescriptionChange,  onFilenameChange, onAddTag, onRemoveTagByIndex, onStage, onSave }) {
-    formElement.addEventListener("submit", (event) => {
+    saveButtonElement.addEventListener("click", (event) => {
       event.preventDefault(); // don't reload page
 
       onSave();
@@ -136,18 +135,10 @@ export class View {
       saveButtonElement.innerText = saveStatusDisplayStrings.get(saveStatus)!;
     }
 
-    if (libraryUrl !== previousState.libraryUrl) {
-      if (libraryUrl && libraryUrl.length) {
-        openLibraryLinkElement.href = libraryUrl;
-      } else {
-        openLibraryLinkElement.removeAttribute("href");
-      }
-    }
 
     if (connectionStatus !== previousState.connectionStatus) {
       const isError = connectionStatus === "error";
       if (isError) {
-        openLibraryLinkElement.hidden = true;
         saveButtonElement.hidden = true;
       }
       actionsElement.classList.toggle("has-error", isError);

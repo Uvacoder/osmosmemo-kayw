@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
     <form class="popup-container js-creation-form">
@@ -24,7 +24,13 @@
       <div class="field">
         <label class="field__label" for="description">Description</label>
         <div class="field__input js-textarea-fit-container">
-          <textarea id="description" name="description" class="js-description field__input" placeholder="Something useful for your future self" rows="1"></textarea>
+          <textarea
+            id="description"
+            name="description"
+            class="js-description field__input"
+            placeholder="Something useful for your future self"
+            rows="1"
+          ></textarea>
         </div>
       </div>
       <hr />
@@ -37,7 +43,16 @@
             https://stackoverflow.com/questions/48338606/html-datalist-shows-extra-options-separated-by-horizontal-line
             https://stackoverflow.com/questions/15927182/how-to-turn-off-autocomplete-while-keep-using-datalist-element-in-html
           -->
-          <input id="filename" class="js-file-input as-partial-l" name="file" type="text" list="file-options" title="Alphanumeric characters, hyphen and underscore only " autocomplete="off" required />
+          <input
+            id="filename"
+            class="js-file-input as-partial-l"
+            name="file"
+            type="text"
+            list="file-options"
+            title="Alphanumeric characters, hyphen and underscore only "
+            autocomplete="off"
+            required
+          />
           <datalist id="file-options" class="js-file-options"></datalist>
         </div>
       </div>
@@ -45,7 +60,14 @@
         <label class="field__label" for="tags">Tags</label>
         <div class="add-tag field__input">
           <div class="added-tags js-added-tags"></div>
-          <input id="tags" class="js-tag-input as-partial-l" name="tag" type="text" list="tag-options" title="Alphanumeric characters, hyphen and underscore only. Press ENTER to add."/>
+          <input
+            id="tags"
+            class="js-tag-input as-partial-l"
+            name="tag"
+            type="text"
+            list="tag-options"
+            title="Alphanumeric characters, hyphen and underscore only. Press ENTER to add."
+          />
           <button type="button" class="as-partial-r js-add-tag-button">Add</button>
           <datalist id="tag-options" class="js-tag-options"></datalist>
         </div>
@@ -61,10 +83,9 @@
       <hr />
       <div class="js-actions actions">
         <button class="js-stage">💾 Stage</button>
-        <button type="submit" class="js-save">🔗 Save to GitHub</button>
-        <a class="button js-open-library" target="_blank">🔎 Search</a>
+        <button class="js-save">🔗 Save to GitHub</button>
         <button type="button" class="js-open-options open-options" title="Open settings">
-          <span class="open-options__show-when-error">⚙</span>
+          <span>⚙</span>
         </button>
       </div>
     </form>

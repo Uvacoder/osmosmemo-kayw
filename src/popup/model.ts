@@ -65,7 +65,7 @@ export class Model {
     }
   }
   updateAndCache(delta: Partial<FullModel>) {
-    this.update(delta, true);
+    this.update(delta/*, true*/);
   }
 
   update(delta: Partial<FullModel>, shouldCache = false) {

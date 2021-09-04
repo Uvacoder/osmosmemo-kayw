@@ -18,24 +18,26 @@ export async function getMergedContent({ accessToken, username, repo, filename, 
 
 export async function getMergedJson({ accessToken, username, repo, newTagFileOptions, filename }) {
   const contents = await getContents({ accessToken, username, repo, filename });
-  const tagFiles = contents.content ? JSON.parse(contents.content) : {};
+  const tagFiles = contents.content ? JSON.parse(b64DecodeUnicode(contents.content)) : {};
   tagFiles.tags = tagFiles.tags.concat(newTagFileOptions.tags)
   tagFiles.files = tagFiles.files.concat(newTagFileOptions.files)
-  return JSON.stringify(tagFiles)
+  return JSON.stringify(tagFiles, null, 4)
   //writeContent({ accessToken, username, repo, filename: 'wiki.json', previousSha: contents.sha, content: JSON.stringify(tagFiles)});
 }
 
+// https://gist.github.com/StephanHoyer/91d8175507fcae8fb31a
 export async function insertMultipleFiles({ accessToken, username, repo, files, message })  {
   const branch = 'master'
   const sha = await fetchHead({ accessToken , username, repo, branch })
   const tree = await fetchTree({ accessToken , username, repo, sha })
   const blobs = await Promise.all(files.map((file) => createBlob({ accessToken, username, repo, content: file.content })))
+
   const newTree = await createTree({
     accessToken, username, repo,
     tree: files.map((file, index) => {
       return {
         path: file.path,
-        mode: '100644',
+        mode: '100755',
         type: 'blob',
         sha: blobs[index].sha
       };
@@ -152,7 +154,7 @@ async function createTree({ accessToken, username, repo, tree, basetree }) {
 
 async function createCommit({ accessToken, username, repo, tree, message, parents }) {
   try {
-    const response = fetch(`https://api.github.com/repos/${username}/${repo}/git/commits`, {
+    const response = await fetch(`https://api.github.com/repos/${username}/${repo}/git/commits`, {
       method: "POST",
       headers: new Headers({
         Authorization: "Basic " + btoa(`${username}:${accessToken}`),
