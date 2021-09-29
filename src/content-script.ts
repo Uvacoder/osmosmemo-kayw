@@ -12,6 +12,14 @@ const SKIP_CANONICAL_HOSTNAMES = ["www.youtube.com"];
 let iframeEle: HTMLIFrameElement;
 let selectionText: string;
 
+let mouseXY: { x: number; y: number };
+document.onmousedown = (ev) => {
+  mouseXY = {
+    x: ev.clientX,
+    y: ev.clientY,
+  };
+};
+
 function injectContentScript() {
   // make sure the content script is injected only on first run
   if (window._osmosmemoInjected) return;
@@ -55,6 +63,17 @@ function injectContentScript() {
         iframeEle.focus();
         iframeEle.style.width = "420px";
         iframeEle.style.height = "560px";
+        if (mouseXY.x + 420 > window.innerWidth) {
+          iframeEle.style.right = "0px";
+        } else {
+          iframeEle.style.left = mouseXY.x + "px";
+        }
+        if (mouseXY.y + 560 > window.innerHeight) {
+          iframeEle.style.bottom = "0px";
+        } else {
+          iframeEle.style.top = mouseXY.y + "px";
+        }
+        /*
         const selection = window.getSelection();
         if (selection) {
           const rect = selection.getRangeAt(0).getBoundingClientRect();
@@ -69,6 +88,7 @@ function injectContentScript() {
             iframeEle.style.top = rect.top + "px";
           }
         }
+       */
       });
       document.body.parentElement?.appendChild(iframeEle);
     }
@@ -96,12 +116,21 @@ function injectContentScript() {
 
   function getPageUrl() {
     let url = document.querySelector(`link[rel="canonical"]`)?.getAttribute("href")?.trim();
+    if (url) {
+      try {
+        new URL(url);
+      } catch {
+        url = location.href;
+      }
+    } else {
+      url = location.href;
+    }
 
     /**
      * Some websites incorrectly used canonical url. Fallback to location.href
      */
-    const canonicalHostname = new URL(url ?? location.href).hostname;
-    if (!url || SKIP_CANONICAL_HOSTNAMES.includes(canonicalHostname)) {
+    const canonicalHostname = new URL(url).hostname;
+    if (SKIP_CANONICAL_HOSTNAMES.includes(canonicalHostname)) {
       url = location.href;
     }
 
